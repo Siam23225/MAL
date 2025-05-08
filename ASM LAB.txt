@@ -1,0 +1,639 @@
+Addition
+
+.model small
+.stack 100h
+.data
+a db 'Enter first number: $'
+b db 10,13,10,13,'Enter second number: $'
+c db 10,13,10,13,'Sum of the two numbers is: $'
+.code
+main proc
+    mov ax,@data
+    mov ds,ax
+    
+    mov ah,9
+    lea dx,a
+    int 21h
+    
+    mov ah,1
+    int 21h 
+    sub al,48
+    mov bl,al
+    
+    mov ah,9
+    lea dx,b
+    int 21h
+    
+    mov ah,1
+    int 21h 
+    sub al, 48
+    mov bh,al
+    
+    mov ah,9
+    lea dx,c
+    int 21h  
+    
+    add bl,bh 
+    mov ax,0 
+    mov al,bl      
+    
+    mov bl,10 
+    div bl
+    mov cl,ah
+    
+    add al,48
+    mov dl,al
+    mov ah,2
+    int 21h 
+    
+    add cl,48
+    mov dl,cl
+    mov ah,2
+    int 21h 
+    
+    exit:
+    mov ah,4ch
+    int 21h
+    main endp
+end main
+
+Largest
+
+.model small
+.stack 100h
+.data
+    msg1 db 'Enter first number: $'
+    msg2 db 10,13,'Enter second number: $'
+    msg3 db 10,13,'Enter third number: $'
+    msg4 db 10,13,10,13,10,13,'Largest number is: $'
+.code
+main proc
+    mov ax, @data
+    mov ds, ax
+
+    mov ah, 9
+    lea dx, msg1
+    int 21h
+
+    mov ah, 1
+    int 21h
+    mov bl, al
+
+    mov ah,9
+    lea dx,msg2
+    int 21h
+    
+    mov ah,1
+    int 21h
+    cmp al,bl
+    jle skip1
+    mov bl,al
+    skip1: 
+    mov ah,9
+    lea dx,msg3
+    int 21h
+    
+    mov ah,1
+    int 21h
+    cmp al,bl
+    jle skip2
+    mov bl,al
+    skip2:
+    mov ah,9
+    lea dx,msg4
+    int 21h
+    
+    mov dl,bl
+    mov ah,2
+    int 21h
+exit:
+    mov ah, 4ch
+    int 21h
+    main endp
+end main
+
+Multiplication
+
+.model small
+.stack 100h
+.data
+msg1 db 'Enter first 2-digit number: $'
+msg2 db 10,13,'Enter second 2-digit number: $'
+msg3 db 10,13,10,13,'The Multiplication of the two number is: $'   
+num1 dw ?
+num2 dw ? 
+t db ?
+h db ?
+te db ?
+o db ?
+.code
+main proc
+    mov ax,@data
+    mov ds,ax
+    mov dx,offset msg1         ;first number
+    mov ah,9
+    int 21h
+    
+    mov ah,1
+    int 21h
+    sub al,48
+    mov bl,10
+    mul bl
+    mov cx,0 
+    mov ah,0
+    mov cx,ax
+    
+    mov ah,1
+    int 21h
+    sub al,48
+    mov ah,0
+    add cx,ax    
+    mov num1,cx
+    
+    lea dx,msg2  ; second number
+    mov ah,9
+    int 21h
+    
+    mov ah,1
+    int 21h
+    sub al,48
+    mov bl,10
+    mul bl   
+    mov cx,0
+    mov ah,0
+    mov cx,ax
+    
+    mov ah,1
+    int 21h
+    sub al,48
+    mov ah,0
+    add cx,ax
+    mov num2,cx
+    
+    mov ax,num1
+    mul num2   
+    
+    mov bx,1000
+    mov dx,0
+    div bx
+    mov cx,dx
+    add al,48
+    mov t,al
+    
+    mov ax,cx
+    mov dx,0
+    mov bx,100
+    div bx
+    mov cx,dx
+    add al,48
+    mov h,al
+    
+    mov ax,cx
+    mov dx,0
+    mov bl,10
+    div bl
+    add al,48
+    mov te,al
+    add ah,48
+    mov o,ah
+    
+    lea dx,msg3
+    mov ah,9
+    int 21h
+    
+    cmp t,'0'
+    je hundred
+    mov ah,2
+    mov dl,t
+    int 21h
+    
+    hundred:
+    cmp h,'0'
+    je ten
+    mov ah,2
+    mov dl,h
+    int 21h
+    
+    ten:
+    mov dl,te
+    mov ah,2
+    int 21h
+    mov dl,o
+    mov ah,2
+    int 21h
+    exit:
+    mov ah,4ch
+    int 21h
+    main endp
+end main
+
+Conditional Jump
+
+.model small
+.stack 100h
+.data
+msg1 db '0 to 9 numbers $'
+b db '0'
+.code
+main proc
+    mov ax, @data
+    mov ds,ax
+    
+    mov ah,9
+    lea dx,msg1
+    int 21h  
+    mov ah,2
+    mov dl,10
+    int 21h
+    mov dl,13
+    int 21h
+    
+    mov cx,10  
+    
+    loop1: 
+    mov ah,2
+    mov dl,b
+    int 21h
+    inc b  
+    
+    mov ah,2
+    mov dl,' '
+    int 21h
+    
+    ;mov ah,2
+    ;mov dl,10
+    ;int 21h
+    ;mov dl,13
+    ;int 21h'
+    
+    loop loop1
+    
+    exit:
+    mov ah,4ch
+    int 21h
+    main endp
+end main
+
+Left Reverse
+
+.model small
+.stack 100h
+.data
+    rows db ?
+    what db 'Enter a number: $'
+    star db '*$'
+    newline db 10,13,'$'
+.code
+main proc
+    mov ax,@data
+    mov ds,ax 
+    mov ah,9
+    lea dx,what
+    int 21h
+    
+    mov ah,1
+    int 21h 
+    sub al,48
+    mov rows,al  
+    
+    lea dx,newline
+    mov ah,9
+    int 21h 
+    
+    mov cl,1
+    
+    outer_loop:
+    cmp cl,rows
+    jg exit
+    
+    mov bl,1
+    
+    inner_loop:
+    cmp bl,cl
+    jg next_row
+    
+    mov ah,9
+    lea dx,star
+    int 21h
+    
+    inc bl
+    jmp inner_loop
+    
+    next_row:
+    mov ah,9
+    lea dx,newline
+    int 21h
+    
+    inc cl
+    jmp outer_loop
+    
+    exit:
+    mov ah,4ch
+    int 21h
+    main endp
+end main
+
+Right Alligneed
+
+.model small
+.stack 100h
+.data
+rows db ?
+what db 'Enter number of rows: $'
+star db '*$'
+space db ' $'
+newline db 10,13,'$'
+.code
+main proc
+    mov ax,@data
+    mov ds,ax
+    
+    lea dx,what
+    mov ah,9
+    int 21h
+    
+    mov ah,1
+    int 21h
+    sub al,48
+    cmp al,1
+    jl default
+    cmp al,9
+    jg default
+    mov rows,al
+    jmp start_print
+    
+    default:
+    mov rows,5
+    
+    start_print:
+    mov ah,9
+    lea dx,newline
+    int 21h
+    mov cl,1  
+    
+    print_rows:
+    cmp cl,rows
+    jg exit   
+    mov al,rows
+    sub al,cl
+    mov bl,al
+    
+    print_space:
+    cmp bl,0
+    jle print_stars 
+    
+    mov ah,9
+    mov dx,offset space
+    int 21h
+    dec bl
+    jmp print_space
+    
+    print_stars:
+    mov bl,cl      
+    
+    print_star:
+    cmp bl,0
+    jle next_line  
+    
+    mov ah,9
+    mov dx,offset star
+    int 21h
+    dec bl
+    jmp print_star
+    
+    next_line:
+    mov ah,9
+    lea dx,newline
+    int 21h
+    
+    inc cl
+    jmp print_rows
+    
+    exit:
+    mov ah, 4ch
+    int 21h
+    main endp
+end main
+    
+    Print A to Z
+
+.model small
+.stack 100h
+.data
+a db 'Loop Concept $'
+b db 'a'
+.code
+main proc
+    mov ax, @data
+    mov ds,ax
+    
+    mov ah,9
+    lea dx,a
+    int 21h
+    
+    mov cx,26  
+    
+    loop1: 
+    mov ah,2
+    mov dl,b
+    int 21h
+    inc b  
+    
+    mov ah,2
+    mov dl,' '
+    int 21h
+    
+    mov ah,2
+    mov dl,10
+    int 21h
+    mov dl,13
+    int 21h
+    
+    loop loop1
+    
+    exit:
+    mov ah,4ch
+    int 21h
+    main endp
+end main
+
+Multiplication Table
+
+.model small
+.stack 100h
+.data
+    eq db '=', '$' 
+    what db 'Give a number between 0-9 for multiplication table: $',
+    x  db 'x', '$'
+    nl db 13,10,'$'
+.code
+main proc
+    mov ax, @data
+    mov ds, ax
+                
+    mov ah,9
+    lea dx,what
+    int 21h
+    mov ah, 1
+    int 21h
+    sub al, '0'    
+    mov bl, al      
+    mov bh, 0   
+    mov ah,9
+    lea dx,nl
+    int 21h
+    
+table_loop:
+    mov ah, 2
+    mov dl, bl
+    add dl, '0'
+    int 21h
+
+    mov ah, 9
+    mov dx,offset x
+    int 21h
+                                     
+    mov ah, 2
+    mov dl, bh
+    add dl, '0'
+    int 21h
+
+    mov ah, 9
+    lea dx, eq
+    int 21h
+
+    mov al, bl
+    mul bh 
+    mov cl,10
+    
+    div cl
+    mov cx,ax
+
+    add cl,48
+    mov dl,cl
+    mov ah,2 
+    int 21h
+    add ch,48
+    mov dl,ch 
+    mov ah,2
+    int 21h 
+    inc bh
+    lea dx,nl
+    mov ah,9
+    int 21h
+    cmp bh,10
+    jge exit
+    jmp table_loop
+    exit:
+    mov ah, 4ch
+    int 21h
+main endp
+end main
+
+
+Reverse
+
+.model small
+.stack 100h
+.data
+msg1 db 'Enter a number: $'
+msg2 db 10,13,10,13,'Reverse Number is: $'
+.code
+main proc
+    mov ax,@data
+    mov ds,ax
+    mov ah,9
+    mov dx,offset msg1
+    int 21h
+    
+    mov cx,0
+    read:
+    mov ah,1
+    int 21h
+    cmp al,13
+    je end_read
+    sub al,48
+    mov ah,0
+    push ax
+    inc cx
+    jmp read
+    
+    end_read:
+    mov ah,9
+    lea dx,msg2
+    int 21h
+    
+    mov ah,2
+    
+    display:
+    pop dx
+    add dl,48
+    int 21h
+    loop display
+    
+    exit:
+    mov ah,4ch
+    int 21h
+    main endp
+end main
+
+
+Palindrome
+
+.model small
+.stack 100h
+.data
+msg1 db 'Enter a word or Number: $'
+msg2 db 10,13,10,13,'It is palindrome! $'
+msg3 db 10,13,10,13,'It is not palindrome!$'
+input db 20 dup('$')
+.code
+main proc
+    mov ax,@data
+    mov ds,ax
+    
+    mov dx,offset msg1
+    mov ah,9
+    int 21h
+    mov si,0   
+    
+    read:
+    mov ah,1
+    int 21h
+    cmp al,13
+    je done
+    mov input[si],al
+    inc si
+    jmp read
+    
+    done:
+    dec si
+    mov di,0
+    
+    check:      
+    cmp di,si
+    jge is_pali
+    mov al,input[si]
+    mov bl,input[di]
+    cmp al,bl
+    jne not_pali
+    inc di
+    dec si
+    jmp check  
+    
+    is_pali:
+    mov dx,offset msg2
+    mov ah,9
+    int 21h
+    jmp exit
+    
+    not_pali:
+    lea dx,msg3
+    mov ah,9
+    int 21h
+    
+    exit:
+    mov ah,4ch
+    int 21h
+    main endp
+end main
